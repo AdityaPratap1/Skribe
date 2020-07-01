@@ -1,6 +1,7 @@
 import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/fade_animation.dart';
 import 'package:app/configuration/size_config.dart';
+import 'package:app/pages/signup_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -245,6 +246,8 @@ class _LoginPageState extends State<LoginPage> {
         GestureDetector(
           onTap: () {
             // TO-DO Lead the user to the sign up page for registration.
+            Navigator.push(context,
+                new MaterialPageRoute(builder: (context) => SignUpPage()));
           },
           child: Padding(
             padding: EdgeInsets.only(

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "6319386304",
+    "firebase_url": "https://skribe-210dc.firebaseio.com",
+    "project_id": "skribe-210dc",
+    "storage_bucket": "skribe-210dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:6319386304:android:d2281355606f1fbb958725",
+        "android_client_info": {
+          "package_name": "com.skribe.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "6319386304-5rfs8b8nu6pp57hsrld1bef5rv6oh6jf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqJ17emcCqdW3yzLKpfLdXpf_su-aNccc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "6319386304-5rfs8b8nu6pp57hsrld1bef5rv6oh6jf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
