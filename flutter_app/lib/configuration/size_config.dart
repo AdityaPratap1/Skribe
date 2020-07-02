@@ -1,6 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 
+/// This class encapsulates the size configurations of the app.
+/// The size configurations include screen height and width and safe areas.
+///
+/// Anytime the screen's height and width are needed, can be accessed from this class
+/// without using Mediaquery at that location.
+/// 
+/// @author [Aditya Pratap]
+/// @version 1.0
+///
 class SizeConfig {
   static MediaQueryData _mediaQueryData;
   static double screenWidth;

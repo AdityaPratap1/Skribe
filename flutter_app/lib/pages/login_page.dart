@@ -1,7 +1,8 @@
 import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/fade_animation.dart';
+import 'package:app/configuration/input_validator.dart';
 import 'package:app/configuration/size_config.dart';
-import 'package:app/pages/signup_page.dart';
+import 'package:app/services/user_authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,11 @@ import 'package:flutter/material.dart';
 /// @author [Aditya Pratap]
 /// @version 1.0
 class LoginPage extends StatefulWidget {
+  LoginPage({this.auth, this.loginCallback});
+
+  final BaseAuth auth;
+  final VoidCallback loginCallback;
+
   @override
   State<StatefulWidget> createState() => _LoginPageState();
 }
@@ -27,7 +33,21 @@ class _LoginPageState extends State<LoginPage> {
   double _height;
   double _width;
 
+  TextEditingController _emailController;
+  TextEditingController _passwordController;
+
   final _formKey = new GlobalKey<FormState>();
+
+  String _errorMessage;
+  bool _isLoading;
+
+  @override
+  void initState() {
+    super.initState();
+
+    this._emailController = new TextEditingController();
+    this._passwordController = new TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +56,9 @@ class _LoginPageState extends State<LoginPage> {
     // Initialize the instance variables.
     this._height = SizeConfig.screenHeight;
     this._width = SizeConfig.screenWidth;
-
     return Scaffold(
       body: ListView(
-        children: <Widget>[_showLogo(context), _showForm(context)],
+        children: <Widget>[this._showLogo(context), this._showForm(context)],
       ),
     );
   }
@@ -100,13 +119,13 @@ class _LoginPageState extends State<LoginPage> {
           child: new Column(
             children: <Widget>[
               // Input fields
-              _showEmailAndPasswordInputs(context),
+              this._showEmailAndPasswordInputs(context),
 
               // Log In button
-              _showLoginButton(context),
+              this._showLoginButton(context),
 
               // Sign Up  button
-              _showSignUpButton(context),
+              this._showSignUpButton(context),
             ],
           ),
         ));
@@ -150,6 +169,9 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
+              controller: this._emailController,
+              onSaved: (value) => this._emailController.text = value.trim(),
+              validator: (value) => InputValidator.email(value),
               style:
                   TextStyle(color: Colors.white, decorationColor: Colors.white),
             ),
@@ -176,6 +198,9 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
+              controller: this._passwordController,
+              onSaved: (value) => this._passwordController.text = value.trim(),
+              validator: (value) => InputValidator.password(value),
               style:
                   TextStyle(color: Colors.white, decorationColor: Colors.white),
             ),
@@ -210,7 +235,8 @@ class _LoginPageState extends State<LoginPage> {
         2,
         GestureDetector(
           onTap: () {
-            // TO-DO Verify the credentials and log the user into the app.
+            // On login button pressed, validate the fields and log in.
+            this._validateAndLogIn();
           },
           child: Padding(
             padding: EdgeInsets.only(
@@ -245,9 +271,11 @@ class _LoginPageState extends State<LoginPage> {
         2,
         GestureDetector(
           onTap: () {
-            // TO-DO Lead the user to the sign up page for registration.
-            Navigator.push(context,
-                new MaterialPageRoute(builder: (context) => SignUpPage()));
+            // Named route to the sign up page.
+            Navigator.of(context).pushNamed('/signup', arguments: {
+              'loginCallback': this.widget.loginCallback,
+              'auth': this.widget.auth
+            });
           },
           child: Padding(
             padding: EdgeInsets.only(
@@ -274,5 +302,55 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ));
+  }
+
+  /// This method verifies if all the inputs for the fields have been entered appropriately,
+  /// and saves the vales.
+  ///
+  /// @precondition none.
+  /// @return A boolean indicating if all the inputs have been eneterd appropriately.
+  bool _validateAndSave() {
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  /// This method signs user into the app by calling the SignIn method and the logincallback method from the Auth class.
+  ///
+  /// @precondition none
+  /// @postcondition The user is validated, and signed in to the app.
+  void _validateAndLogIn() async {
+    if (this._validateAndSave()) {
+      setState(() {
+        this._errorMessage = "";
+        this._isLoading = true;
+      });
+
+      try {
+        // Sign In using the entered email and password.
+        String uId = await widget.auth
+            .signIn(this._emailController.text, this._passwordController.text);
+
+        setState(() {
+          this._isLoading = false;
+        });
+
+        //if user was successfully logged in, execute loginCallback()
+        if (await this.widget.auth.getCurrentUser() != null) {
+          widget.loginCallback();
+        }
+      } catch (e) {
+        // If log in is unsuccessful, print the error message and reset the form.
+        print('Error: $e');
+        setState(() {
+          this._isLoading = false;
+          this._errorMessage = e.message;
+          this._formKey.currentState.reset();
+        });
+      }
+    }
   }
 }

@@ -1,9 +1,12 @@
 import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/fade_animation.dart';
+import 'package:app/configuration/input_validator.dart';
 import 'package:app/configuration/size_config.dart';
-import 'package:app/pages/login_page.dart';
+import 'package:app/models/user.dart';
+import 'package:app/services/user_authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// This is the Sign Up registration page of the application.
 /// This class contains the sign up form and the sign up button.
@@ -13,6 +16,12 @@ import 'package:flutter/material.dart';
 /// @author [Aditya Pratap]
 /// @version 1.0
 class SignUpPage extends StatefulWidget {
+  final BaseAuth auth;
+  final VoidCallback loginCallback;
+
+  SignUpPage({Key key, @required this.auth, @required this.loginCallback})
+      : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _SignUpPageState();
 }
@@ -27,7 +36,31 @@ class _SignUpPageState extends State<SignUpPage> {
   double _height;
   double _width;
 
+  TextEditingController _firstNameController;
+  TextEditingController _lastNameController;
+  TextEditingController _emailController;
+  TextEditingController _passwordController;
+  TextEditingController _confirmPasswordController;
+
+  String _errorMessage;
+  bool _isLoading;
+
+  User _thisUser;
+
   final _formKey = new GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    this._firstNameController = new TextEditingController();
+    this._lastNameController = new TextEditingController();
+    this._emailController = new TextEditingController();
+    this._passwordController = new TextEditingController();
+    this._confirmPasswordController = new TextEditingController();
+
+    this._thisUser = new User();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Align(
           alignment: Alignment.center,
           child: Padding(
-            padding: EdgeInsets.only(top: this._height * .10),
+            padding: EdgeInsets.only(top: this._height * .05),
             child: Text(
               'Sign Up',
               style: TextStyle(
@@ -133,8 +166,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
+              controller: this._firstNameController,
+              validator: (value) => InputValidator.fname(value),
               style:
                   TextStyle(color: Colors.white, decorationColor: Colors.white),
+              onSaved: (value) => this._firstNameController.text = value.trim(),
             ),
             SizedBox(
               height: this._height * .05,
@@ -158,6 +194,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
+              controller: this._lastNameController,
+              validator: (value) => InputValidator.lname(value),
+              onSaved: (value) => this._lastNameController.text = value.trim(),
               style:
                   TextStyle(color: Colors.white, decorationColor: Colors.white),
             ),
@@ -207,6 +246,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
+              controller: _emailController,
+              validator: (value) => InputValidator.email(value),
+              onSaved: (value) => this._emailController.text = value.trim(),
               style:
                   TextStyle(color: Colors.white, decorationColor: Colors.white),
             ),
@@ -233,6 +275,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
+              controller: this._passwordController,
+              validator: (value) => InputValidator.password(value),
+              onSaved: (value) => this._passwordController.text = value.trim(),
               style:
                   TextStyle(color: Colors.white, decorationColor: Colors.white),
             ),
@@ -259,6 +304,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
+              controller: this._confirmPasswordController,
+              validator: (value) => value != this._passwordController.text
+                  ? 'Passwords do not match'
+                  : null,
+              onSaved: (value) =>
+                  this._confirmPasswordController.text = value.trim(),
               style:
                   TextStyle(color: Colors.white, decorationColor: Colors.white),
             ),
@@ -281,8 +332,7 @@ class _SignUpPageState extends State<SignUpPage> {
         GestureDetector(
           onTap: () {
             // TO-DO Lead the user to the sign up page for registration.
-            Navigator.push(context,
-                new MaterialPageRoute(builder: (context) => LoginPage()));
+            this._validateAndSignUp();
           },
           child: Padding(
             padding: EdgeInsets.only(
@@ -310,4 +360,64 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ));
   }
+
+  /// This method verifies if all the inputs for the fields have been entered appropriately,
+  /// and saves the vales.
+  ///
+  /// @precondition none.
+  /// @return A boolean indicating if all the inputs have been eneterd appropriately.
+  ///
+  bool _validateAndSave() {
+    final form = this._formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  /// This method registers the user into the app by calling the signUp method and the logincallback method from the Auth class.
+  ///
+  /// @precondition none
+  /// @postcondition The user is validated, registered, and signed in to the app.
+  void _validateAndSignUp() async {
+    if (this._validateAndSave()) {
+      setState(() {
+        this._errorMessage = "";
+        this._isLoading = true;
+      });
+
+      try {
+        this._thisUser.setUserId = await this
+            .widget
+            .auth
+            .signUp(this._emailController.text, this._passwordController.text);
+
+        //check if user has been successfully signed up
+        if (this.widget.auth.getCurrentUser() != null) {
+          //finish loading
+          setState(() {
+            this._isLoading = false;
+          });
+
+          //Log in
+          this.widget.loginCallback();
+        }
+      } catch (e) {
+        if (e is PlatformException) {
+          // Check if the current emial already exists.
+          if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+            // If email already exists, warn user using an alert dialog from the GeneralWidgets class.
+          }
+        }
+        setState(() {
+          this._isLoading = false;
+          this._errorMessage = e.message;
+          this._formKey.currentState.reset();
+        });
+      }
+    }
+  }
+
+
 }
