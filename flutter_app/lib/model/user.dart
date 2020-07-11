@@ -76,6 +76,10 @@ class User {
     this._userId = uId;
   }
 
+  /// This getter method gets the user Id of the current user.
+  ///
+  /// @precondition none
+  /// @return The user Id of the current user.
   get getUserId {
     return this._userId;
   }

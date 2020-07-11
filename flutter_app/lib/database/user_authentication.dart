@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 
-abstract class BaseAuth {
+abstract class BaseAuth  {
   /// This firebase method signs the user into the app.
   ///
   /// @param [email] The email address part of the credentials.
@@ -74,6 +75,7 @@ class Auth extends BaseAuth {
         email: email, password: password);
     FirebaseUser user = result.user;
     return user.uid;
+
   }
 
   // Sign up user using email and password. A new user is created if the method executes properly.

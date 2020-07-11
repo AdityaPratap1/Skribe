@@ -2,8 +2,8 @@ import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/fade_animation.dart';
 import 'package:app/configuration/input_validator.dart';
 import 'package:app/configuration/size_config.dart';
-import 'package:app/models/user.dart';
-import 'package:app/services/user_authentication.dart';
+import 'package:app/database/user_authentication.dart';
+import 'package:app/model/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,7 +23,7 @@ class SignUpPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _SignUpPageState();
+  State<StatefulWidget> createState() => SignUpPageState();
 }
 
 /// This is the statefull class and child of the SignUpPage.
@@ -32,9 +32,12 @@ class SignUpPage extends StatefulWidget {
 /// @author [Aditya Pratap]
 /// @modified []
 /// @version 1.0
-class _SignUpPageState extends State<SignUpPage> {
+class SignUpPageState extends State<SignUpPage> {
   double _height;
   double _width;
+
+  String _errorMessage;
+  bool _isLoading;
 
   TextEditingController _firstNameController;
   TextEditingController _lastNameController;
@@ -42,8 +45,6 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController _passwordController;
   TextEditingController _confirmPasswordController;
 
-  String _errorMessage;
-  bool _isLoading;
 
   User _thisUser;
 
@@ -53,11 +54,13 @@ class _SignUpPageState extends State<SignUpPage> {
   void initState() {
     super.initState();
 
+    //executes after build is done
     this._firstNameController = new TextEditingController();
     this._lastNameController = new TextEditingController();
     this._emailController = new TextEditingController();
     this._passwordController = new TextEditingController();
     this._confirmPasswordController = new TextEditingController();
+
 
     this._thisUser = new User();
   }
@@ -72,9 +75,36 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: ListView(
         children: <Widget>[
+          this._showBackButton(context),
           this._showSignUpText(context),
           this._showSignUpForm(context)
         ],
+      ),
+    );
+  }
+
+  /// This method builds the back button to navigate to the previous screen.
+  ///
+  /// @param [context] the BuildContext or the laocation of the widget in the tree structure.
+  ///
+  /// @precondition none
+  /// @return A new padding containing the IconButton.
+  Widget _showBackButton(BuildContext context) {
+    return Padding(
+      padding:
+          EdgeInsets.only(left: this._width * .10, top: this._height * .02),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            size: this._width * .1,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
     );
   }
@@ -90,7 +120,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Align(
           alignment: Alignment.center,
           child: Padding(
-            padding: EdgeInsets.only(top: this._height * .05),
+            padding: EdgeInsets.only(top: this._height * .01),
             child: Text(
               'Sign Up',
               style: TextStyle(
@@ -246,7 +276,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
-              controller: _emailController,
+              controller: this._emailController,
               validator: (value) => InputValidator.email(value),
               onSaved: (value) => this._emailController.text = value.trim(),
               style:
@@ -418,6 +448,4 @@ class _SignUpPageState extends State<SignUpPage> {
       }
     }
   }
-
-
 }

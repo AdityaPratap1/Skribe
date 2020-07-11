@@ -2,7 +2,7 @@ import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/fade_animation.dart';
 import 'package:app/configuration/input_validator.dart';
 import 'package:app/configuration/size_config.dart';
-import 'package:app/services/user_authentication.dart';
+import 'package:app/database/user_authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,10 +13,10 @@ import 'package:flutter/material.dart';
 /// @author [Aditya Pratap]
 /// @version 1.0
 class LoginPage extends StatefulWidget {
-  LoginPage({this.auth, this.loginCallback});
-
   final BaseAuth auth;
   final VoidCallback loginCallback;
+
+  LoginPage({this.auth, this.loginCallback});
 
   @override
   State<StatefulWidget> createState() => _LoginPageState();
@@ -33,13 +33,13 @@ class _LoginPageState extends State<LoginPage> {
   double _height;
   double _width;
 
+  String _errorMessage;
+  bool _isLoading;
+
   TextEditingController _emailController;
   TextEditingController _passwordController;
 
   final _formKey = new GlobalKey<FormState>();
-
-  String _errorMessage;
-  bool _isLoading;
 
   @override
   void initState() {
@@ -123,6 +123,8 @@ class _LoginPageState extends State<LoginPage> {
 
               // Log In button
               this._showLoginButton(context),
+
+              this._showErrorMessage(),
 
               // Sign Up  button
               this._showSignUpButton(context),
@@ -302,6 +304,24 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ));
+  }
+
+  Widget _showErrorMessage() {
+    //If there is an error message, display it.
+    if (this._errorMessage != null && this._errorMessage.length > 0) {
+      return new Text(
+        this._errorMessage,
+        style: TextStyle(
+            fontSize: 13.0,
+            color: Colors.red,
+            height: 1.0,
+            fontWeight: FontWeight.w300),
+      );
+    } else {
+      return new Container(
+        height: 0.0,
+      );
+    }
   }
 
   /// This method verifies if all the inputs for the fields have been entered appropriately,

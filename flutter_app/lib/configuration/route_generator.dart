@@ -1,7 +1,7 @@
-import 'package:app/pages/home_page.dart';
-import 'package:app/pages/login_page.dart';
-import 'package:app/pages/root_page.dart';
-import 'package:app/pages/signup_page.dart';
+import 'package:app/view/home/home_page.dart';
+import 'package:app/view/auth/login_page.dart';
+import 'package:app/view/auth/root_page.dart';
+import 'package:app/view/auth/signup_page.dart';
 import 'package:flutter/material.dart';
 
 /// This class managaes the routing for the app.
@@ -45,6 +45,7 @@ class RouteGenerator {
             builder: (_) => HomePage(
                   thisUser: _args['thisUser'],
                 ));
+      case '/profile':
 
       default:
         return null;

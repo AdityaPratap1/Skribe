@@ -1,9 +1,9 @@
-import 'package:app/models/user.dart';
-import 'package:app/pages/login_page.dart';
-import 'package:app/services/user_authentication.dart';
+import 'package:app/database/user_authentication.dart';
+import 'package:app/model/user.dart';
+import 'package:app/view/auth/login_page.dart';
 import 'package:flutter/material.dart';
 
-import 'home_page.dart';
+import 'package:app/view/home/home_page.dart';
 
 /// This enumeration keeps track of a user's authentication status.
 /// The status types include user email verification and authentication.

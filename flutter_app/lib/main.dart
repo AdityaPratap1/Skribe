@@ -1,19 +1,32 @@
 import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/route_generator.dart';
+import 'package:app/model/pomodoro_model.dart';
+import 'package:app/view/auth/root_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
+import 'model/navigation_model.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(RestartWidget(child: new MyApp()));
+  runApp(RestartWidget(
+      child: MultiProvider(providers: [
+    Provider(
+      create: (context) => NavigationModel(),
+    ),
+    Provider(
+      create: (context) => PomodoroModel(),
+    )
+  ], child: new MyApp()))); 
 }
 
 /// This class is the entry point into the application.
 ///
 /// @author [Aditya Pratap]
 /// @version 1.0
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget with ChangeNotifier {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -37,7 +50,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      home: RootPage(),
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
