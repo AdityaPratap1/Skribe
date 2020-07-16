@@ -2,6 +2,7 @@ import 'package:app/view/home/home_page.dart';
 import 'package:app/view/auth/login_page.dart';
 import 'package:app/view/auth/root_page.dart';
 import 'package:app/view/auth/signup_page.dart';
+import 'package:app/view/home/task_page.dart';
 import 'package:flutter/material.dart';
 
 /// This class managaes the routing for the app.
@@ -45,7 +46,8 @@ class RouteGenerator {
             builder: (_) => HomePage(
                   thisUser: _args['thisUser'],
                 ));
-      case '/profile':
+      case '/tasks':
+        return MaterialPageRoute(builder: (_) => TaskPage(notebookDocId: _args['notebookDocId'],));
 
       default:
         return null;

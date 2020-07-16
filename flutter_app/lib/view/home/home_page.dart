@@ -1,14 +1,13 @@
 import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/size_config.dart';
-import 'package:app/database/update_userinfo_firestore.dart';
-import 'package:app/database/user_authentication.dart';
-import 'package:app/model/navigation_model.dart';
-import 'package:app/model/user.dart';
+import 'package:app/services/user_service.dart';
+import 'package:app/view_models/navigation_model.dart';
+import 'package:app/view_models/user.dart';
 import 'package:app/view/home/calendar_page.dart';
 import 'package:app/view/home/dashboard_page.dart';
 import 'package:app/view/home/flashcards_page.dart';
 import 'package:app/view/home/pomodoro_timer.dart';
-import 'package:app/view/home/task_page.dart';
+import 'package:app/view/home/notebook_page.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatefulWidget {
-  User thisUser;
+  UserModel thisUser;
   HomePage({this.thisUser});
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -25,13 +24,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   double _height;
 
-  UpdateUserInfoFireStore _updateUserInfo;
   PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    this._updateUserInfo = new UpdateUserInfoFireStore();
     this._pageController = new PageController(
         initialPage: 2, viewportFraction: 1.0, keepPage: true);
   }
@@ -83,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                       navigationModel.currentPage = page;
                     },
                     children: [
-                      TaskPage(),
+                      NotebookPage(),
                       PomodoroTimer(),
                       Dashboard(),
                       FlashCardsPage(),

@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
+
 /// This model class keeps track of the User's attributes.
 ///
 /// @author [Aditya Pratap]
 /// @version 1.0
-class User {
+class UserModel extends ChangeNotifier {
   String _firstName;
   String _lastName;
   String _userId;
@@ -15,7 +17,7 @@ class User {
   ///
   /// @precondition The parameters cannot be null or empty.
   /// @postcondition A new User object with initialized values.
-  User([this._firstName, this._lastName, this._userId]);
+  UserModel([this._firstName, this._lastName, this._userId]);
 
   /// This setter method sets the firstName instance variable with
   /// the specified value.

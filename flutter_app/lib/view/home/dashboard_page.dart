@@ -7,7 +7,8 @@ class Dashboard extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Container(
-            child: Text("This is the Dash Page", style: TextStyle(color: Colors.white))),
+            child: Text("This is the Dash Page",
+                style: TextStyle(color: Colors.white))),
       ),
     );
   }

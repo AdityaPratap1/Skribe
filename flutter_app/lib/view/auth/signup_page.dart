@@ -2,8 +2,8 @@ import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/fade_animation.dart';
 import 'package:app/configuration/input_validator.dart';
 import 'package:app/configuration/size_config.dart';
-import 'package:app/database/user_authentication.dart';
-import 'package:app/model/user.dart';
+import 'package:app/services/user_authentication.dart';
+import 'package:app/view_models/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,7 +46,7 @@ class SignUpPageState extends State<SignUpPage> {
   TextEditingController _confirmPasswordController;
 
 
-  User _thisUser;
+  UserModel _thisUser;
 
   final _formKey = new GlobalKey<FormState>();
 
@@ -62,7 +62,7 @@ class SignUpPageState extends State<SignUpPage> {
     this._confirmPasswordController = new TextEditingController();
 
 
-    this._thisUser = new User();
+    this._thisUser = new UserModel();
   }
 
   @override

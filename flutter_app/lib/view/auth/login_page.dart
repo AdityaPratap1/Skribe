@@ -2,7 +2,7 @@ import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/fade_animation.dart';
 import 'package:app/configuration/input_validator.dart';
 import 'package:app/configuration/size_config.dart';
-import 'package:app/database/user_authentication.dart';
+import 'package:app/services/user_authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -361,6 +361,7 @@ class _LoginPageState extends State<LoginPage> {
         //if user was successfully logged in, execute loginCallback()
         if (await this.widget.auth.getCurrentUser() != null) {
           widget.loginCallback();
+          
         }
       } catch (e) {
         // If log in is unsuccessful, print the error message and reset the form.

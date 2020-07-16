@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:app/configuration/constraints.dart';
 import 'package:app/configuration/size_config.dart';
-import 'package:app/model/pomodoro_model.dart';
+import 'package:app/view_models/pomodoro_viewmodel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -29,7 +29,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
   double _width;
   SnackBar _snackBar;
   TextEditingController _cyclesTextFieldController;
-  PomodoroModel _pomodoroModel;
+  PomodoroViewModel _pomodoroViewModel;
 
   /// This method is invoked the class is instantiated.
   /// This 0-pramater constructor initializes the instance variables
@@ -42,7 +42,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       this._cyclesTextFieldController = new TextEditingController();
       this._snackBar = new SnackBar(content: null);
-      this._pomodoroModel = new PomodoroModel();
+      this._pomodoroViewModel = new PomodoroViewModel();
     });
   }
 
@@ -66,10 +66,10 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     this._height = SizeConfig.screenHeight;
     this._width = SizeConfig.screenWidth;
     // Provider listens to changes in state from the model class.
-    return ChangeNotifierProvider<PomodoroModel>(
-      create: (context) => PomodoroModel(),
-      child: Consumer<PomodoroModel>(
-        builder: (context, pomodoroModel, _) => Scaffold(
+    return ChangeNotifierProvider<PomodoroViewModel>(
+      create: (context) => PomodoroViewModel(),
+      child: Consumer<PomodoroViewModel>(
+        builder: (context, PomodoroViewModel, _) => Scaffold(
           body: SingleChildScrollView(
               child: Center(
             child: Column(children: [
@@ -82,42 +82,42 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
                 ),
               ),
               // set the pomodoreModel object to the global pomodoroModle object
-              this._setPomodoroModelObject(pomodoroModel),
+              this._setPomodoroViewModelObject(PomodoroViewModel),
 
               SizedBox(height: this._height * .05),
               CircularPercentIndicator(
-                  percent: this._pomodoroModel.timeForTimer /
-                      (this._pomodoroModel.getTime),
+                  percent: this._pomodoroViewModel.timeForTimer /
+                      (this._pomodoroViewModel.getTime),
                   center: Container(
                     child: Column(
                       children: [
                         Padding(
                           padding: EdgeInsets.only(top: this._height * .10),
                           child: Text(
-                            this._pomodoroModel.currentCycle.toString() +
+                            this._pomodoroViewModel.currentCycle.toString() +
                                 " of " +
-                                this._pomodoroModel.numberCycles.toString(),
+                                this._pomodoroViewModel.numberCycles.toString(),
                             style: TextStyle(
                                 fontSize: this._width * .08,
                                 color: Colors.white),
                           ),
                         ),
-                        Text(this._pomodoroModel.timerText,
+                        Text(this._pomodoroViewModel.timerText,
                             style: TextStyle(
-                                color: Colors.white, fontSize: _width * .20)),
+                                color: Colors.white, fontSize: _width * .18)),
                       ],
                     ),
                   ),
                   radius: this._width * .75,
-                  lineWidth: this._width * .04,
-                  backgroundColor: this._pomodoroModel.backgroundColor,
-                  progressColor: this._pomodoroModel.progressColor),
+                  lineWidth: this._width * .03  ,
+                  backgroundColor: this._pomodoroViewModel.backgroundColor,
+                  progressColor: this._pomodoroViewModel.progressColor),
               SizedBox(height: this._height * .05),
               Stack(children: [
                 this._showStartTimerButton(),
                 this._showStopButton(),
               ]),
-              SizedBox(height: this._height * .05),
+              SizedBox(height: this._height * .03),
  
               Row(
                 children: [
@@ -127,7 +127,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
                   Text(
                     "Enter the number of cycles",
                     style: TextStyle(
-                        color: Colors.white, fontSize: this._width * .05),
+                        color: Colors.white, fontSize: this._width * .04),
                   ),
                   this._showCyclesTextField()
                 ],
@@ -139,24 +139,24 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  /// This method sets the passed in pomodoroModel object to the global pomodoroModel object.
+  /// This method sets the passed in PomodoroViewModel object to the global PomodoroViewModel object.
   /// The global pomodoreModel object can be used throughout the class rather then just the widget tree.
   ///
-  /// @param [pomodoroModel] The pomodoroModel that needs to be set to the global variable.
+  /// @param [PomodoroViewModel] The PomodoroViewModel that needs to be set to the global variable.
   ///
-  /// @precondition The pomodoroModel object cannot be null
+  /// @precondition The PomodoroViewModel object cannot be null
   /// @return A blank, shrunken sized box used as a filler.
-  Widget _setPomodoroModelObject(PomodoroModel pomodoroModel) {
-    if (pomodoroModel == null) {
-      throw new ArgumentError("The pomodoroModel object cannot be null");
+  Widget _setPomodoroViewModelObject(PomodoroViewModel PomodoroViewModel) {
+    if (PomodoroViewModel == null) {
+      throw new ArgumentError("The PomodoroViewModel object cannot be null");
     }
-    this._pomodoroModel = pomodoroModel;
+    this._pomodoroViewModel = PomodoroViewModel;
 
     return SizedBox.shrink();
   }
 
   /// This method creates a timer object and starts a timer given the specified time in seconds.
-  /// Inside, the timer, the state of timeForTimer of [this._pomodoroModel.timeForTimer] decreases every second.
+  /// Inside, the timer, the state of timeForTimer of [this._pomodoroViewModel.timeForTimer] decreases every second.
   /// And when the timer reaches 0, the timer is cancelled.
   ///
   /// @param [timeForTimer] The amount of time the timer should run for in seconds.
@@ -167,20 +167,20 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     if (timeForTimer <= 0) {
       throw new ArgumentError("The specified time must be greater than 0");
     }
-    this._pomodoroModel.timeForTimer =
+    this._pomodoroViewModel.timeForTimer =
         timeForTimer; //This time varibale will change every second.
-    this._pomodoroModel.setTime =
+    this._pomodoroViewModel.setTime =
         timeForTimer; // This time varibale will change and is used for setting the percentage of the percentIndicator.
-    this._pomodoroModel.isStartButtonVisible = false;
+    this._pomodoroViewModel.isStartButtonVisible = false;
 
-    this._pomodoroModel.setTimer =
+    this._pomodoroViewModel.setTimer =
         Timer.periodic(Duration(seconds: 1), (Timer t) {
-      if (this._pomodoroModel.timeForTimer < 1) {
-        this._pomodoroModel.getTimer.cancel();
+      if (this._pomodoroViewModel.timeForTimer == 0) {
+        this._pomodoroViewModel.getTimer.cancel();
       } else {
-        this._pomodoroModel.timeForTimer--;
-        this._pomodoroModel.timerText = _convertToStandardTime(this
-            ._pomodoroModel
+        this._pomodoroViewModel.timeForTimer--;
+        this._pomodoroViewModel.timerText = _convertToStandardTime(this
+            ._pomodoroViewModel
             .timeForTimer); // converts seconds to minutes and seconds.
       }
     });
@@ -222,7 +222,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
   /// @return If the timer has not been started, return a floating action button.
   ///
   Widget _showStartTimerButton() {
-    if (!this._pomodoroModel.isStartButtonVisible) {
+    if (!this._pomodoroViewModel.isStartButtonVisible) {
       return Container(
         width: this._width * .13,
       );
@@ -237,7 +237,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
               ),
               Scaffold.of(context).showSnackBar(this._snackBar)
             },
-          this._pomodoroModel.numberCycles =
+          this._pomodoroViewModel.numberCycles =
               int.parse(this._cyclesTextFieldController.text),
           this._startCycles(),
         },
@@ -282,7 +282,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
   /// The visibility/usablity of this button depends on whether the timer
   /// has been started or not.
   ///
-  /// @onPressed Stop the timer by cancelling [this._pomodoroModel.getTimer.cancel()] and reset all the variables
+  /// @onPressed Stop the timer by cancelling [this._pomodoroViewModel.getTimer.cancel()] and reset all the variables
   /// relating to the timer.
   ///
   /// @precondtion none.
@@ -290,21 +290,21 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
   /// @return If the timer has been started, return a floating action button.
   ///
   Widget _showStopButton() {
-    if (!this._pomodoroModel.isStopButtonVisible) {
+    if (!this._pomodoroViewModel.isStopButtonVisible) {
       return Container(
         width: this._width * .13,
       );
     } else {
       return FloatingActionButton(
         onPressed: () {
-          this._pomodoroModel.getTimer.cancel();
-          this._pomodoroModel.setTime = 1500;
-          this._pomodoroModel.timeForTimer = 1500;
-          this._pomodoroModel.timerText = "25:00";
-          this._pomodoroModel.isStopButtonVisible = false;
-          this._pomodoroModel.isStartButtonVisible = true;
-          this._pomodoroModel.numberCycles = 0;
-          this._pomodoroModel.currentCycle = 0;
+          this._pomodoroViewModel.getTimer.cancel();
+          this._pomodoroViewModel.setTime = 1500;
+          this._pomodoroViewModel.timeForTimer = 1500;
+          this._pomodoroViewModel.timerText = "25:00";
+          this._pomodoroViewModel.isStopButtonVisible = false;
+          this._pomodoroViewModel.isStartButtonVisible = true;
+          this._pomodoroViewModel.numberCycles = 0;
+          this._pomodoroViewModel.currentCycle = 0;
         },
         backgroundColor: primaryColor,
         child: Icon(
@@ -324,39 +324,39 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
   /// @precondition none.
   /// @postcondition A timer in a loop specified by the number of cycles.
   _startCycles() async {
-    this._pomodoroModel.isStopButtonVisible = true;
-    for (int i = 0; i < this._pomodoroModel.numberCycles; i++) {
-      this._pomodoroModel.currentCycle = i + 1;
+    this._pomodoroViewModel.isStopButtonVisible = true;
+    for (int i = 0; i < this._pomodoroViewModel.numberCycles; i++) {
+      this._pomodoroViewModel.currentCycle = i + 1;
 
       //Start Study Timer
-      this._pomodoroModel.progressColor = primaryColor;
-      this._pomodoroModel.backgroundColor = backGroundColor;
-      this._startTimer(1500);
+      this._pomodoroViewModel.progressColor = primaryColor;
+      this._pomodoroViewModel.backgroundColor = backGroundColor;
+      this._startTimer(20);
       await Future.delayed(Duration(
           seconds:
-              1501)); // Dlay execution to prevent the rest of the code from running.
+              21)); // Dlay execution to prevent the rest of the code from running.
       Vibration.vibrate(
           duration: 5000,
           amplitude:
               255); //Haptic feedback to let user knoe cycle has been completed.
       this
-          ._pomodoroModel
+          ._pomodoroViewModel
           .getTimer
           .cancel(); //Cancel the timer to prevent overlaping of timers.
 
       //Start Break Timer
-      this._pomodoroModel.progressColor = backGroundColor;
-      this._pomodoroModel.backgroundColor = primaryColor;
-      this._startTimer(300);
-      await Future.delayed(Duration(seconds: 301));
+      this._pomodoroViewModel.progressColor = backGroundColor;
+      this._pomodoroViewModel.backgroundColor = primaryColor;
+      this._startTimer(10);
+      await Future.delayed(Duration(seconds: 12));
       Vibration.vibrate(duration: 5000, amplitude: 255);
 
-      this._pomodoroModel.getTimer.cancel();
+      this._pomodoroViewModel.getTimer.cancel();
 
-      //this._startTimer(pomodoroModel, 5),
+      //this._startTimer(PomodoroViewModel, 5),
     }
 
-    this._pomodoroModel.isStartButtonVisible = true;
-    this._pomodoroModel.isStopButtonVisible = false;
+    this._pomodoroViewModel.isStartButtonVisible = true;
+    this._pomodoroViewModel.isStopButtonVisible = false;
   }
 }

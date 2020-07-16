@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 ///
 /// @author [Aditya Pratap]
 /// @version 1.0
-class PomodoroModel extends ChangeNotifier {
+class PomodoroViewModel extends ChangeNotifier {
   int _timeForTimer = 0;
   int _currentCycle = 0;
   int _numberOfPomodoroCycles = 0;

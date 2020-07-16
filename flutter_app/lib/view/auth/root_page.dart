@@ -1,5 +1,5 @@
-import 'package:app/database/user_authentication.dart';
-import 'package:app/model/user.dart';
+import 'package:app/services/user_authentication.dart';
+import 'package:app/view_models/user.dart';
 import 'package:app/view/auth/login_page.dart';
 import 'package:flutter/material.dart';
 
@@ -44,14 +44,14 @@ class _RootPageState extends State<RootPage> {
   AuthStatus _authStatus = AuthStatus.NOT_DETERMINED;
   VerifyStatus _verifyStatus = VerifyStatus.NOT_DETERMINED;
   BaseAuth _auth;
-  User _thisUser;
+  UserModel _thisUser;
 
   // Changes authStatus from NOT_DETERMINED to either LOGGED_IN or NOT_LOGGED_IN
   @override
   void initState() {
     super.initState();
     this._auth = Auth();
-    this._thisUser = new User();
+    this._thisUser = new UserModel();
     this._auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {

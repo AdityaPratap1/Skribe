@@ -1,25 +1,33 @@
 import 'package:app/configuration/constraints.dart';
+import 'package:app/configuration/locator.dart';
 import 'package:app/configuration/route_generator.dart';
-import 'package:app/model/pomodoro_model.dart';
+import 'package:app/view_models/notebook_viewmodel.dart';
+import 'package:app/view_models/pomodoro_viewmodel.dart';
 import 'package:app/view/auth/root_page.dart';
+import 'package:app/view_models/task_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'model/navigation_model.dart';
+import 'view_models/navigation_model.dart';
 
 Future main() async {
+  setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(RestartWidget(
       child: MultiProvider(providers: [
-    Provider(
+    ChangeNotifierProvider(
       create: (context) => NavigationModel(),
     ),
-    Provider(
-      create: (context) => PomodoroModel(),
-    )
-  ], child: new MyApp()))); 
+    ChangeNotifierProvider(
+      create: (context) => PomodoroViewModel(),
+    ),
+    ChangeNotifierProvider(
+      create: (context) => locator<TaskViewModel>(),
+    ),
+    ChangeNotifierProvider(create: (context) => locator<NoteBookViewModel>()),
+  ], child: new MyApp())));
 }
 
 /// This class is the entry point into the application.
