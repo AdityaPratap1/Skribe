@@ -81,4 +81,8 @@ class InputValidator {
     }
     return null;
   }
+
+  static String todoAspects(String value) {
+    return value.isEmpty ? "This value cannot be empty" : null;
+  }
 }

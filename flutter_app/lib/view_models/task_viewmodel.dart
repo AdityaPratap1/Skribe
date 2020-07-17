@@ -12,6 +12,9 @@ import 'package:flutter/cupertino.dart';
 /// @version 1.0.
 class TaskViewModel extends ChangeNotifier {
   TaskService _taskService = locator<TaskService>();
+  bool _isTaskBoxVisible = false;
+  bool _isFloatingButtonVisible = true;
+  DateTime _dueDate = DateTime.now();
   List<TaskModel> _tasks;
 
   /// This method fetches all the tasks in the collection using the TaskService class.
@@ -89,5 +92,63 @@ class TaskViewModel extends ChangeNotifier {
         await this._taskService.addTask(taskModel.toJson(), notebookDocId);
 
     return;
+  }
+
+  /// This stter method assigns the visibility of the taskBox.
+  /// After assigned, notify all listeners.
+  ///
+  /// @param [visible] A boolean determining if the taskBox visible or not.
+  ///
+  /// @precondition none.
+  /// @postcondition The [isTaskBoxVisible] is assigned.
+  set taskBoxVisibility(bool visible) {
+    this._isTaskBoxVisible = visible;
+    notifyListeners();
+  }
+
+  /// This getter method gets the visibility of the taskBox.
+  ///
+  /// @precondition none.
+  /// @return [_isTaskBoxVisible] A boolean determining if the taskBox visible or not.
+  get taskBoxVisibility {
+    return this._isTaskBoxVisible;
+  }
+
+  /// This stter method assigns the visibility of the floating action button.
+  /// After assigned, notify all listeners.
+  ///
+  /// @param [visible] A boolean determining if the floating action button visible or not.
+  ///
+  /// @precondition none.
+  /// @postcondition The [_isFloatingButtonVisible] is assigned.
+  set floatingButtonVisibility(bool visible) {
+    this._isFloatingButtonVisible = visible;
+  }
+
+  /// This getter method gets the visibility of the floating action button.
+  ///
+  /// @precondition none.
+  /// @return [_isFloatingButtonVisible] A boolean determining if the floating action button visible or not.
+  get floatingButtonVisibility {
+    return this._isFloatingButtonVisible;
+  }
+
+  /// This stter method assigns a date for the [_dueDate] object.
+  /// After assigned, notify all listeners.
+  ///
+  /// @param [date] The date to be assigned.
+  ///
+  /// @precondition The date object cannot be null.
+  /// @postcondition The [_dueDate] is assigned.
+  set dueDate(DateTime date) {
+    this._dueDate = date;
+  }
+
+  /// This getter method gets the due date.
+  ///
+  /// @precondition none.
+  /// @retunr The due date of the task.
+  get dueDate {
+    return this._dueDate;
   }
 }

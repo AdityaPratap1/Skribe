@@ -54,6 +54,8 @@ class NotebookPage extends StatelessWidget {
               stream: this._taskProvider.fetchProductsAsStream(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
+                  // Serialize data from firestore as NotebookModle objects
+                  // and add the objects to the notebooks list.
                   this._notebooks = snapshot.data.documents
                       .map((doc) =>
                           NotebookModel.fromMap(doc.data, doc.documentID))
@@ -233,7 +235,9 @@ class NotebookPage extends StatelessWidget {
                         ),
                         elevation: 5.0,
                         onPressed: () {
-                          if (_formKey.currentState.validate()) {
+                          // validate the form and create the notebook.
+                          // Pass the NotebookModel object into the addNotebook method.
+                          if (this._formKey.currentState.validate()) {
                             NotebookModel theNotebookModel = new NotebookModel(
                                 name: this
                                     ._notebookNameTextEditingController

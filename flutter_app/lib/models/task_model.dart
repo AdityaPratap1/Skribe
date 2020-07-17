@@ -45,10 +45,10 @@ class TaskModel {
       : this.documentId = documentId ?? '',
         this.title = snapshot['title'] ?? '',
         this.description = snapshot['description'] ?? '',
-        this.status = snapshot['status'] ?? '',
-        this.dueDate = snapshot['duedate'] ?? '',
-        this.reminder = snapshot['reminder'] ?? '',
-        this.subTasks = snapshot['subtasks'] ?? '';
+        this.status = snapshot['status'] ?? null,
+        this.dueDate = snapshot['duedate'] ?? null,
+        this.reminder = snapshot['reminder'] ?? null,
+        this.subTasks = snapshot['subtasks'] ?? null;
 
   /// This method takes a map and serializes that data into the instance varibales.
   ///
@@ -57,6 +57,7 @@ class TaskModel {
   ///
   toJson() {
     return {
+      "documentId": this.documentId,
       "title": this.title,
       "description": this.description,
       "status": this.status,
